@@ -2,33 +2,45 @@
 <html>
 <script src="https://aframe.io/releases/0.9.1/aframe.min.js"></script>
 <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.js"></script>
+<script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
   <body style='margin : 0px; overflow: hidden;'>
     <a-scene embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;' hidden>
-      <!-- <a-assets>
-          <a-asset-item id="animated-asset" src="https://raw.githubusercontent.com/nicolocarpignoli/nicolocarpignoli.github.io/master/ar-click-events/models/CesiumMan.gltf"></a-asset-item>
-      </a-assets>
-
-      <a-marker preset="hiro">
-          <a-entity
-              id="animated-model"
-              gltf-model="#animated-asset"
-              scale="2">
-          </a-entity>
-      </a-marker> -->
- 
       <a-assets>
-        <a-asset-item id="animated-asset" src="https://raw.githubusercontent.com/nicolocarpignoli/nicolocarpignoli.github.io/master/ar-click-events/models/CesiumMan.gltf"></a-asset-item>
+        <a-asset-item id="animated-asset" cursor-listener src="https://raw.githubusercontent.com/nicolocarpignoli/nicolocarpignoli.github.io/master/ar-click-events/models/CesiumMan.gltf"></a-asset-item>
         <a-asset-item id="airplane_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/AR-Alphabets-words/master/assets/airplane/FREOBJ.mtl"></a-asset-item>
         <a-asset-item id="airplane_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/AR-Alphabets-words/master/assets/airplane/FREOBJ.obj"></a-asset-item>
         <a-asset-item id="boat_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/boat/scene.gltf"></a-asset-item>
       </a-assets>
-      <a-marker preset="hiro">
+      <a-marker preset="hiro" cursor='rayOrigin: mouse'>
         <a-entity
-          gltf-model="#animated-asset">
+          id="model"
+          gltf-model="#animated-asset"
+          scale="2">
           <!-- <a-box position='0 0.5 0' material='color: yellow;'></a-box> -->
         </a-entity>
       </a-marker>
-      <a-entity camera></a-entity>
+      <!-- <a-entity camera></a-entity> -->
+      <a-entity camera look-controls mouse-cursor></a-entity>
     </a-scene>
+
+    <script>
+      AFRAME.registerComponent('cursor-listener', {
+        init: function() {
+          const animatedMarker = document.querySelector("#model");
+          const aEntity = document.querySelector("#model");
+          console.log("Inside cursor-listener");
+
+          // every click, we make our model grow in size :)
+          animatedMarker.addEventListener('click', function(ev, target) {
+            console.log("Clicked!!!!");
+            const intersectedElement = ev && ev.detail && ev.detail.intersectedEl;
+            if (aEntity && intersectedElement === aEntity) {
+                const scale = aEntity.getAttribute('scale');
+                Object.keys(scale).forEach((key) => scale[key] = scale[key] + 1);
+                aEntity.setAttribute('scale', scale);
+            }
+          });
+      }});
+    </script>
   </body>
 </html>
